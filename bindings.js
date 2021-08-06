@@ -148,13 +148,13 @@ exports.getFileName = function getFileName(calling_file) {
   var origPST = Error.prepareStackTrace,
     origSTL = Error.stackTraceLimit,
     dummy = {},
-    fileName;
+    fileName = "";
 
   Error.stackTraceLimit = 10;
 
   Error.prepareStackTrace = function(e, st) {
     for (var i = 0, l = st.length; i < l; i++) {
-      fileName = st[i].getFileName();
+      fileName = st[i].getFileName() || fileName;
       if (fileName !== __filename) {
         if (calling_file) {
           if (fileName !== calling_file) {
@@ -210,6 +210,7 @@ exports.getRoot = function getRoot(file) {
     }
     if (prev === dir) {
       // Got to the top
+      return process.cwd();
       throw new Error(
         'Could not find module root given file: "' +
           file +
